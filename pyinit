@@ -1,0 +1,69 @@
+#!/bin/bash
+
+# cli tool like git init and npm init 
+# helps scaffold python libraries and apps for pypi release / pip installation
+
+_root="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+_name="$1"
+_bname="$( basename "$_name" )"
+
+# **SIDE EFFECT FUNCS**
+
+# making venv
+function venv() {
+    echo "creating .venv"
+    python3 -m venv .venv
+    . ./.venv/bin/activate
+}
+
+# creates .gitignore .dockerignore etc
+function scaffold() {
+    # help msg
+    if [[ "$_name" == "-h" || "$_name" == "--help" || -z "$_name" ]]; then
+        printf "USAGE:\npyinit [-h] <repo name>"
+        exit 0
+    fi
+
+    # exisitng dir
+
+    if [[ -d "$_name" ]]; then
+        printf "$_name dir already exists"
+        exit 1
+    fi
+
+    # scaffolding
+    mkdir "$_bname"
+    # cp -r "$_root/__scaffold__"/* "${_bname}"
+    # cp -r "$_root/__scaffold__"/.[^.]* "${_bname}"
+    cp -rT "$_root/__scaffold__" "${_bname}"
+    
+    mv "${_bname}/__name__" "${_bname}/__${_bname}__"
+
+    cd "${_bname}"
+    # git init
+    read -p "git init? (yn)? " yn
+    if [[ $yn == "y" || $yn == "Y" ]]; then
+        git init . 
+    fi
+
+    # .venv init
+    read -p ".venv init? (yn)? " yn
+    if [[ $yn == "y" || $yn == "Y" ]]; then
+        venv
+    fi
+}
+
+
+function summary() {
+    echo "summary tbl"
+    pyver=$( python3 --version )
+    pipver=$( pip --version )
+    tree=$( tree -a . )
+
+    echo "python3: $pyver"
+    echo "pip3: $pipver"
+    echo -e "libraries\n$tree"
+}
+
+scaffold
+summary
