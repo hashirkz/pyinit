@@ -1,6 +1,6 @@
 # about 
-utility script like npm init / git init
-inits python repo with nessecary tools/files for pypi / pip distribution
+utility script like npm init / git init  
+inits python repo with nessecary tools/files for pypi / pip distribution  
 
 ## installation + usage
 ```bash
